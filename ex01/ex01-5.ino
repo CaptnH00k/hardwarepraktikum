@@ -10,42 +10,59 @@
  DB7 : Pin 9
 */
 
-// include LCD functions:
+// include the library used to control the LCD attached to the arduino board. 
 #include <LiquidCrystal.h> 
 
-// define the LCD screen
-LiquidCrystal lcd(3, 4, 6, 7, 8, 9);
+/*
+ * A constang holding the reference to a LiquidCrystal object (the lcd on the board). 
+ * The constructer used is specified as LiquidCrystal(rs, enable, d4, d5, d6, d7).
+ * 
+ * See the available documentation here:
+ * https://www.arduino.cc/en/Reference/LiquidCrystalConstructor
+ */
+const LiquidCrystal LCD(3, 4, 6, 7, 8, 9);
 
-// global variable, stores the result from analog pin
-int analogValue;
-int test = 5;
+/**
+ * The time in milliseconds that should be waited after "reprinting" onto the LCD used.
+ * Writing to the LCD can cause flickering otherwise, if written onto the LCD too often.
+ */
+const int FLICKER_PREVENTION_TIME = 100;
 
-void setup()
-{
-  // LCD has 4 lines with 20 chars
-  lcd.begin(20, 4);
+/*
+ * This method gets called once, before the update cycle starts ticking.
+ */
+void setup() {
+  // initializes the interface to the LCD with 4 rows and 20 chars per row
+  LCD.begin(20, 4);
+
 }
 
+/*
+ * The main-loop of this program. Gets repeatedly called without delay.
+ * 
+ * @see ex01-5#lcdLogic()
+ */
+void loop() {
+  // The current value of the analog pin A0.
+  int analogValue = analogRead(A0);
 
-void loop()
-{
-  analogValue = analogRead(A0);
-
-  lcd.clear();
-  lcd.print("Analog 0: " + String(analogValue));
-   // wait for 100 ms (reduces display flickering)
-  delay(100);
+  lcdLogic(analogValue);
+  
 }
 
+/*
+ * The logic used to control the LCD.
+ * 
+ * This method completely blocks other logic-implementation for the time
+ * specified in {@link ex01-6#FLICKER_PREVENTION_TIME}.
+ * 
+ * @param mAnalogValue
+ *                An integer value which gets printed onto the LCDs screen.
+ */
+void lcdLogic(const int mAnalogValue){
+  LCD.clear();
+  LCD.print("Analog 0: " + String(mAnalogValue));
+  delay(FLICKER_PREVENTION_TIME);
+  
+}
 
-/* Usefull LCD functions:
-set the current write position of the lcd to specific line and row:
-  lcd.setCursor(row, line);  
-
-write onto lcd, starting at current position:
-  lcd.print("abc");
-
-clear the lcd (this writes " " into all positions and is therefore slow):
-If only specific areas should be cleared use a mix of setCursor and print(" ") instead
-  lcd.clear();
-*/
