@@ -14,7 +14,7 @@
 #include <LiquidCrystal.h>
 
 /*
- * A constang holding the reference to a LiquidCrystal object (the lcd on the board). 
+ * A constant holding the reference to a LiquidCrystal object (the lcd on the board). 
  * The constructer used is specified as LiquidCrystal(rs, enable, d4, d5, d6, d7).
  * 
  * See the available documentation here:
@@ -113,7 +113,7 @@ boolean ledStatus[] = {false, false, false};
 
 /**
  * Counts the milliseconds passed since the start of this application. 
- * Will reset after a given amount of time
+ * Will reset after a given amount of time (estimated reset after 50 days)
  */
 int tickCounter;
 
