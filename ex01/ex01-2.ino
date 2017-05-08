@@ -58,11 +58,11 @@ void ledBlink(const int mDelayTime){
   delay(mDelayTime);
   
   // turn on LED 2 for the value of {@link ex01-2#DELAY_TIME} milliseconds.
-  digitalWrite(LED_PIN_1, HIGH);
+  digitalWrite(LED_PIN_2, HIGH);
   delay(mDelayTime);
 
   // turn off LED 2 for the value of {@link ex01-2#DELAY_TIME} milliseconds.
-  digitalWrite(LED_PIN_1, LOW);
+  digitalWrite(LED_PIN_2, LOW);
   delay(mDelayTime);
   
 }
