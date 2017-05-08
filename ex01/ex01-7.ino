@@ -103,13 +103,11 @@ const int YELLOW_POSITION = 1;
  */
 const int GREEN_POSITION = 2;
 
-/**
- * This array contains the status of the respective LED (on, off).<br>
- * {@link ex01-7#RED_POSITION}<br>
- * {@link ex01-7#YELLOW_POSITION)<br>
- * {@link ex01-7#GREEN_POSITION)
- */
-boolean ledStatus[] = {false, false, false};
+bool redIsOn = false;
+
+bool yellowIsOn = false;
+
+bool greenIsOn = false;
 
 /**
  * Counts the milliseconds passed since the start of this application. 
@@ -155,13 +153,7 @@ void loop() {
   // The value of the analog pin A0
   int analogValue = analogRead(A0);
 
-  // The current milliseconds passed since this applications start
-  unsigned long time_after = millis();
-
-  // The time passed since method call and the initialization of time_after
-  unsigned long time_diff = time_after - time_before;
-
-  lcdLogic(time_diff, analogValue);
+  lcdLogic(analogValue);
 
   //Wait for 10ms, so the loop won't use the whole proecessors processing speed.
   delay(10);
@@ -179,18 +171,28 @@ void loop() {
  *            
  * @see ex01-7#ledStatus            
  */
-boolean turnOn(const int mLED, const boolean mLEDStatus){
+boolean turnOn(const int mLED){
   // if the LED is off turn it on, and return true, so 
   // the caller knows the "turning on" succeeded.
-  if(mLEDStatus == false){
-    digitalWrite(mLED, HIGH);
-    return true;
-    
-  }
-
-  // otherwise return false, basically won't change the LEDs status.
-  return false;
-  
+     if(mLED == RED_LED){
+        if(redIsOn == false){
+           digitalWrite(mLED, HIGH);
+           redIsOn = true;
+        }
+     }
+     if(mLED == YELLOW_LED){
+           if(yellowIsOn == false){
+           digitalWrite(mLED, HIGH);
+           yellowIsOn = true;
+        }
+     }
+     if(mLED == GREEN_LED){
+           if(greenIsOn == false){
+           digitalWrite(mLED, HIGH);
+           greenIsOn = true;
+        }
+        
+     }
 }
 
 
@@ -205,68 +207,28 @@ boolean turnOn(const int mLED, const boolean mLEDStatus){
  *            
  * @see ex01-7#ledStatus            
  */
-boolean turnOff(const int mLED, const boolean mLEDStatus){
+boolean turnOff(const int mLED){
 
   // if the LED is on turn it off, and return false, so
   // the caller can update the LED status.
-  if(mLEDStatus == true){
-    digitalWrite(mLED, LOW);
-    return false;
-    
-  }
-
-  // otherwise return true, basically won't change the LEDs status.
-  return true;
-
-}
-
-/*
- * Gets a string representation of all the LEDs which are currently on.
- * 
- * @param mLEDStatus
- *              An array containing booleans which are the current status of each flag
- *            
- * @see ex01-7#ledStatus
- */
-String getLEDRepresentation(boolean mLEDStatus[]) {
-
-  // the string built through out this method representing the LEDs which are on.
-  String ledRepresentation = "";
-
-  // start iterating over the elements in the array given.
-  for(int i = 0; i < sizeof(mLEDStatus); i++){
-
-      //check whether the flag is even set for the current iterations colour,
-      // otherwise continue with the next iteration (e.g. the next color)
-      if(mLEDStatus[i] == false){
-        continue;
-        
-      }
-
-      // if there's already a color in the string and we're about to add another 
-      // color to this string, we have to concatenate the string we got with a "+" so 
-      // the new string makes sense
-      if(sizeof(ledRepresentation) >= 2){
-        ledRepresentation += "+";
-        
-      }
-
-      // from here on check whats the current iterations color and add it to the 
-      // string which represents which LED is currently on
-      if(i == RED_POSITION) {
-         ledRepresentation += "red";
-         
-      }else if(i == YELLOW_POSITION) {
-        ledRepresentation += "yellow";
-        
-      }else if(i == GREEN_POSITION) {
-        ledRepresentation += "green";
-        
-      }
-
-      // finally return the built string
-      return ledRepresentation;
-  }
+     if(mLED == RED_LED){
+        if(redIsOn == true){
+           digitalWrite(mLED, LOW);
+           redIsOn = false;
+        }
+     }
+     if(mLED == YELLOW_LED){
+           if(yellowIsOn == true){
+           digitalWrite(mLED, LOW);
+           yellowIsOn = false;
+        }
+     }
+     if(mLED == GREEN_LED){
+           if(greenIsOn == true){
+           digitalWrite(mLED, LOW);
+           greenIsOn = false;
+        }  
+    }
 }
 
 
@@ -338,18 +300,25 @@ int getCurrentButton(const int mAnalogValue) {
  * @param mAnalogValue
  *            The value to be printed onto the LCD as the current analog pins value.
  */
-void lcdLogic(const unsigned long mTimeSpan, const int mAnalogValue){
-  tickCounter += mTimeSpan;
-
-  // if this program hasn't passed {@link ex01-7#FLICKER_PREVENTION_TIME} milliseconds 
-  // since this functions last call do nothing. Prevents flickering of the lcd screen
-  if(mTimeSpan < FLICKER_PREVENTION_TIME){
-    return;
-    
-  }
+void lcdLogic(const int mAnalogValue){
 
   // The current value of the analog pin A0.
   int analogValue = analogRead(A0);
+
+  String buttonRepresentation = "";
+  if(redIsOn){
+    buttonRepresentation = buttonRepresentation + "red";
+  }
+  if(yellowIsOn){
+    if(buttonRepresentation == "red"){
+      buttonRepresentation = buttonRepresentation + "+";
+    }
+    buttonRepresentation = buttonRepresentation + "yellow";
+  }
+  if(greenIsOn){
+    buttonRepresentation = buttonRepresentation + "green";
+   
+  }
 
   // Clear display each time this method gets called, so the 
   // old LCD-display doesn't get overwritten
@@ -371,10 +340,9 @@ void lcdLogic(const unsigned long mTimeSpan, const int mAnalogValue){
   lcd.setCursor(0,2);
 
   // Prints a string representation of all the LEDs which are currently on
-  lcd.print("led: " + getLEDRepresentation(ledStatus));
+  lcd.print("led: " + buttonRepresentation);
 
-  //Finally reset the tickCounter since we started printing on the LCD.
-  tickCounter = 0;
+  delay(FLICKER_PREVENTION_TIME);
 }
 
 /*
@@ -388,20 +356,20 @@ void lcdLogic(const unsigned long mTimeSpan, const int mAnalogValue){
 void ledLogic(const int mTime){
   
   if(mTime < (RED_LED_ON_TIME - YELLOW_LED_ON_TIME)) {
-    ledStatus[YELLOW_POSITION] = turnOff(YELLOW_LED, ledStatus[YELLOW_POSITION]);
-    ledStatus[RED_POSITION] = turnOn(RED_LED, ledStatus[RED_POSITION]);
+    turnOff(YELLOW_LED);
+    turnOn(RED_LED);
     
   }else if(mTime < RED_LED_ON_TIME){
-     ledStatus[YELLOW_POSITION] = turnOn(YELLOW_LED, ledStatus[YELLOW_POSITION]);
+     turnOn(YELLOW_LED);
     
   }else if(mTime < (RED_LED_ON_TIME + GREEN_LED_ON_TIME)){
-    ledStatus[RED_POSITION] = turnOff(RED_LED, ledStatus[RED_POSITION]);
-    ledStatus[YELLOW_POSITION] = turnOff(YELLOW_LED, ledStatus[YELLOW_POSITION]);
-    ledStatus[GREEN_POSITION] = turnOn(GREEN_LED, ledStatus[GREEN_POSITION]);
+    turnOff(RED_LED);
+    turnOff(YELLOW_LED);
+    turnOn(GREEN_LED);
     
   }else {
-    ledStatus[GREEN_POSITION] = turnOff(GREEN_LED, ledStatus[GREEN_POSITION]);
-    ledStatus[YELLOW_POSITION] = turnOn(YELLOW_LED, ledStatus[YELLOW_POSITION]);
+    turnOff(GREEN_LED);
+    turnOn(YELLOW_LED);
     
   }
 }
