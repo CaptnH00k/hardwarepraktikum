@@ -53,8 +53,8 @@ void setup(){
 /*
  * The main-loop of this program. Gets repeatedly called without delay.
  * 
- * @see ex02-1#setMotorSpeed(boolean)
- * @see ex02-1#stopMotor()
+ * @see ex02-2#setMotorSpeed(boolean)
+ * @see ex02-2#stopMotor()
  */
 void loop(){
   stopMotor();
@@ -67,7 +67,7 @@ void loop(){
  
 /**
  * Makes the motor stop, by writing a logic 0 to both motor signals as specified in
- * {@link ex02-1#MOTOR_A1} and {@link ex01-1#MOTOR_A2}.
+ * {@link ex02-2#MOTOR_A1} and {@link ex02-2#MOTOR_A2}.
  */
 void stopMotor(){
   digitalWrite(MOTOR_A1, LOW);
@@ -76,8 +76,8 @@ void stopMotor(){
 }
 
 /**
- * Controls the motor signals specified in {@link ex02-1#MOTOR_A1} 
- * and {@link ex01-1#MOTOR_A2}. If the given boolean is true
+ * Controls the motor signals specified in {@link ex02-2#MOTOR_A1} 
+ * and {@link ex02-2#MOTOR_A2}. If the given boolean is true
  * the motor will move forward, otherwise backwards.
  * 
  * @param mForward

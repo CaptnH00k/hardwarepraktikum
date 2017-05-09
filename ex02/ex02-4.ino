@@ -82,8 +82,8 @@ void setup(){
 /*
  * The main-loop of this program. Gets repeatedly called without delay.
  * 
- * @see ex02-1#setMotorSpeed(boolean)
- * @see ex02-1#stopMotor()
+ * @see ex02-4#driveCurve(int, uint_8, uint_16)
+ * @see ex02-4#stopMotor()
  */
 void loop(){
   stopMotor();
@@ -96,7 +96,7 @@ void loop(){
  
 /**
  * Makes the motor stop, by writing a logic 0 to both motor signals as specified in
- * {@link ex02-1#MOTOR_A1} and {@link ex01-1#MOTOR_A2}.
+ * {@link ex02-4#MOTOR_A1} and {@link ex02-4#MOTOR_A2}.
  */
 void stopMotor(){
   digitalWrite(MOTOR_A1, LOW);
@@ -126,7 +126,22 @@ void driveForward(const int mTime, const uint8_t mSpeed){
   
 }
 
-void driveCurve(const int mTime, const uint8_t mSpeed, const uint8_t mCurveRadius){
+/**
+ * Drives a curve and adjusts the motor strength by the curve radius given, ranging
+ * from -90 to 90. Where 90 radius means the robot will turn on the spot, 0 means the
+ * robot will move forward and -90 means the robot will turn in the other direction on the spot.
+ * 
+ * @param mTime
+ *          The robot will drive as long as the time specified.
+ *          
+ * @param mSpeed
+ *          The speed at which the Motors will move, taking the curve radius
+ *          into consideration
+ *          
+ * @param mCurveRadius
+ *          The radius at which the motors will move. (e.g. the strength of the curve)
+ */
+void driveCurve(const int mTime, const uint8_t mSpeed, const int16_t mCurveRadius){
   
   // method is undefined for curve radix out of the bounds [-90, 90]
   if(mCurveRadius > 90 || mCurveRadius < -90){
@@ -158,25 +173,25 @@ void driveCurve(const int mTime, const uint8_t mSpeed, const uint8_t mCurveRadiu
   
   //Motor B is full speed, and Motor A has to adjust to the curve radius
   if(mCurveRadius < 0){
-    digitalWrite(MOTOR_B1, LOW);
-    digitalWrite(MOTOR_B2, HIGH);
+    setMotorSpeed(true, mSpeed, motorB);
 
     setMotorSpeed(forward, adjustedSpeed, motorA);
 
   //Motor A is full speed, and Motor A has to adjust to the curve radius   
   }else if(mCurveRadius > 0){
-    digitalWrite(MOTOR_A1, LOW);
-    digitalWrite(MOTOR_A2, HIGH);
+    setMotorSpeed(true, mSpeed, motorA);
 
     setMotorSpeed(forward, adjustedSpeed, motorB);
     
   }
+
+  delay(mTime);
 }
 
 
 /**
- * Controls the motor signals specified in {@link ex02-1#MOTOR_A1} 
- * and {@link ex01-1#MOTOR_A2}. If the given boolean is true
+ * Controls the motor signals specified in {@link ex02-4#MOTOR_A1} 
+ * and {@link ex02-4#MOTOR_A2}. If the given boolean is true
  * the motor will move forward, otherwise backwards.
  * 
  * @param mForward

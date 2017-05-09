@@ -83,13 +83,13 @@ void setup(){
 /*
  * The main-loop of this program. Gets repeatedly called without delay.
  * 
- * @see ex02-1#setMotorSpeed(boolean)
- * @see ex02-1#stopMotor()
+ * @see ex02-3#driveForward(int, uint8_t)
+ * @see ex02-3#stopMotor()
  */
 void loop(){
   stopMotor();
 
-  // TODO: add code for debugging purposes, no actual code implementation of setMotorSpeed is
+  // TODO: add code for debugging purposes, no actual code implementation of driveForward is
   // requested from exercise 3
 
   delay(WAIT_PER_CYCLE_MS);
@@ -129,8 +129,8 @@ void driveForward(const int mTime, const uint8_t mSpeed){
 
 
 /**
- * Controls the motor signals specified in {@link ex02-1#MOTOR_A1} 
- * and {@link ex01-1#MOTOR_A2}. If the given boolean is true
+ * Controls the motor signals specified in {@link ex02-3#MOTOR_A1} 
+ * and {@link ex02-3#MOTOR_A2}. If the given boolean is true
  * the motor will move forward, otherwise backwards.
  * 
  * @param mForward
