@@ -143,7 +143,7 @@ void driveCurve(const int mTime, const uint8_t mSpeed, const uint8_t mCurveRadiu
   //calculation for the factor at which the speed has to be adjusted.
   if(abs(mCurveRadius) <= 45){
     factor = (45 - abs(mCurveRadius))/45;
-    forward = true
+    forward = true;
     
   }else if(abs(mCurveRadius) > 45){
     uint8_t tempRadius = abs(mCurveRadius) % 45;
@@ -154,7 +154,7 @@ void driveCurve(const int mTime, const uint8_t mSpeed, const uint8_t mCurveRadiu
   }
 
   // the adjusted Speed. The speed given multiplicated by the factor for the adjustment.
-  uint8_t adjustedSpeed = factor * mSpeed
+  uint8_t adjustedSpeed = factor * mSpeed;
   
   //Motor B is full speed, and Motor A has to adjust to the curve radius
   if(mCurveRadius < 0){
