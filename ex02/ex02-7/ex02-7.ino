@@ -83,22 +83,22 @@ const uint8_t BUTTON_1 = 1;
 /**
  * Holding the integer value associated with the second button.
  */
-const uint8_t BUTTON_2 = 1;
+const uint8_t BUTTON_2 = 2;
 
 /**
  * Holding the integer value associated with the third button.
  */
-const uint8_t BUTTON_3 = 1;
+const uint8_t BUTTON_3 = 3;
 
 /**
  * Holding the integer value associated with the fourth button.
  */
-const uint8_t BUTTON_4 = 1;
+const uint8_t BUTTON_4 = 4;
 
 /**
  * Holding the integer value associated with the fifth button.
  */
-const uint8_t BUTTON_5 = 1;
+const uint8_t BUTTON_5 = 5;
 
 /**
  * Holds the value of the pin to which the ultrasonic sensor is connected to.
@@ -125,7 +125,7 @@ const uint32_t ULTRASONIC_MEASURE_TIMEOUT = 30000;
 /**
  * Holds the value of when to turn if the distance is below this threshold (in centimeters)
  */
-const uint8_t DISTANCE_THRESHOLD = 30;
+const uint8_t DISTANCE_THRESHOLD = 40;
 
 /**
  * An array field holding the motors needed to control motor B 
@@ -154,8 +154,8 @@ void setup(){
   motorA[0] = MOTOR_A1;
   motorA[1] = MOTOR_A2;
 
-  motorB[0] = MOTOR_B1;
-  motorB[1] = MOTOR_B2;
+  motorB[0] = MOTOR_B2;
+  motorB[1] = MOTOR_B1;
 
   
   // Set the individual Motor-Signals to behave as outputs.
@@ -164,14 +164,6 @@ void setup(){
 
   pinMode(MOTOR_B1, OUTPUT);
   pinMode(MOTOR_B2, OUTPUT);
-
-  
-  //set the ultrasonic sensor up, so it can measure distances.
-  pinMode(ULTRASONIC_SENSOR, OUTPUT);
-
-  impulse(ULTRASONIC_SENSOR);
-  
-  pinMode(ULTRASONIC_SENSOR, INPUT);
   
 }
 
@@ -241,7 +233,7 @@ int getCurrentButton(const int16_t mAnalogValue) {
  */
 void checkButtonPress(const int16_t mAnalogValue){
   if(getCurrentButton(mAnalogValue) == BUTTON_3){
-    isDriving = !isDriving;
+    isDriving = true;
     
   }
 }
@@ -285,18 +277,18 @@ void startDriving(){
     driveCurve(MAX_SPEED, 90);
     
   }else{
-    driveForward(MAX_SPEED);
+    driveForward(MAX_SPEED / 3);
     
   }
 }
  
 /**
  * Makes the motor stop, by writing a logic 0 to both motor signals as specified in
- * {@link ex02-7#MOTOR_A1} and {@link ex02-7#MOTOR_A2}.
+ * {@link ex02-4#MOTOR_A1} and {@link ex02-4#MOTOR_A2}.
  */
 void stopMotor(){
-  digitalWrite(MOTOR_A1, LOW);
-  digitalWrite(MOTOR_A2, LOW);
+  setMotorSpeed(true, 0, motorA);
+  setMotorSpeed(true, 0, motorB);
   
 }
 
@@ -320,7 +312,7 @@ void driveForward(const uint8_t mSpeed){
  * Drives a curve and adjusts the motor strength by the curve radius given, ranging
  * from -90 to 90. Where 90 radius means the robot will turn on the spot, 0 means the
  * robot will move forward and -90 means the robot will turn in the other direction on the spot.
- *          
+ * 
  * @param mSpeed
  *          The speed at which the Motors will move, taking the curve radius
  *          into consideration
@@ -337,14 +329,14 @@ void driveCurve(const uint8_t mSpeed, const int16_t mCurveRadius){
   }
 
   // the factor at which the speed has to adjusted.
-  uint8_t factor = 1;
+  double factor = 1;
 
   // a flag determining whether to drive the adjusted motor forward or backward.
   boolean forward = true;
 
   //calculation for the factor at which the speed has to be adjusted.
   if(abs(mCurveRadius) <= 45){
-    factor = (45 - abs(mCurveRadius))/45;
+    factor = ((float) (45 - abs(mCurveRadius)))/ (float) (45);
     forward = true;
     
   }else if(abs(mCurveRadius) > 45){
@@ -356,10 +348,10 @@ void driveCurve(const uint8_t mSpeed, const int16_t mCurveRadius){
   }
 
   // the adjusted Speed. The speed given multiplicated by the factor for the adjustment.
-  uint8_t adjustedSpeed = factor * mSpeed;
+  double adjustedSpeed = factor * mSpeed;
   
   //Motor B is full speed, and Motor A has to adjust to the curve radius
-  if(mCurveRadius < 0){
+  if(mCurveRadius <= 0){
     setMotorSpeed(true, mSpeed, motorB);
 
     setMotorSpeed(forward, adjustedSpeed, motorA);
@@ -402,13 +394,13 @@ void setMotorSpeed(const boolean mForward, uint8_t mSpeed, const uint8_t mMotors
   }
   
   if(mForward){
-    digitalWrite(mMotors[0], LOW);
-    analogWrite(mMotors[1], mSpeed);
+    digitalWrite(mMotors[1], LOW);
+    analogWrite(mMotors[0], mSpeed);
     return;
     
   }
-  analogWrite(mMotors[0], mSpeed);
-  digitalWrite(mMotors[1], LOW);
+  analogWrite(mMotors[1], mSpeed);
+  digitalWrite(mMotors[0], LOW);
   
 }
 
@@ -424,6 +416,8 @@ int measureDistance(const int8_t mUltrasonicSensor){
   // holds the value of how long we waited for the pulse to 
   // start (basically a timeout)
   uint32_t wait_us = 0;
+
+  impulse(mUltrasonicSensor);
 
   while(true){
     
@@ -449,6 +443,8 @@ int measureDistance(const int8_t mUltrasonicSensor){
     }else{
       delayMicroseconds(ULTRASONIC_MEASURE_WAIT);
       wait_us = wait_us + ULTRASONIC_MEASURE_WAIT;
+      
+      impulse(mUltrasonicSensor);
 
       if(wait_us > ULTRASONIC_MEASURE_TIMEOUT){
         return -1;
@@ -466,6 +462,8 @@ int measureDistance(const int8_t mUltrasonicSensor){
  *              The pin which receives the impulse.
  */
 void impulse(const int8_t mUltrasonicSensorPin){
+
+  pinMode(ULTRASONIC_SENSOR, OUTPUT);
   
   //reset the signal on the pin to low
   digitalWrite(mUltrasonicSensorPin, LOW);
@@ -478,5 +476,7 @@ void impulse(const int8_t mUltrasonicSensorPin){
 
   //finally write 0 to the pin so the pulse is complete
   digitalWrite(mUltrasonicSensorPin, LOW);
+
+  pinMode(ULTRASONIC_SENSOR, INPUT);
  }
 

@@ -59,9 +59,7 @@ void setup(){
 void loop(){
   stopMotor();
 
-  // TODO: add code for debugging purposes, no actual code implementation of setMotorSpeed is
-  // requested from exercise 2
-  setMotorSpeed(false, 255);
+  setMotorSpeed(true, 125);
 
   delay(WAIT_PER_CYCLE_MS);
 }
@@ -100,13 +98,13 @@ void setMotorSpeed(const boolean mForward, uint8_t mSpeed){
   }
   
   if(mForward){
-    digitalWrite(MOTOR_A1, LOW);
-    analogWrite(MOTOR_A2, mSpeed);
+    digitalWrite(MOTOR_A2, LOW);
+    analogWrite(MOTOR_A1, mSpeed);
     return;
     
   }
-  analogWrite(MOTOR_A1, mSpeed);
-  digitalWrite(MOTOR_A2, LOW);
+  analogWrite(MOTOR_A2, mSpeed);
+  digitalWrite(MOTOR_A1, LOW);
   
 }
 

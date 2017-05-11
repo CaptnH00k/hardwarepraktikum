@@ -75,8 +75,6 @@ void setup(){
   motorA[0] = MOTOR_A1;
   motorA[1] = MOTOR_A2;
 
-  //because for motor b the signals are
-  //reverse, we also reverse the pins. 
   motorB[0] = MOTOR_B2;
   motorB[1] = MOTOR_B1;
   
@@ -91,20 +89,19 @@ void setup(){
 void loop(){
   stopMotor();
 
-  // TODO: add code for debugging purposes, no actual code implementation of driveForward is
-  // requested from exercise 3
-  driveForward(5000, 100);
+  driveForward(1000, 125);
 
   delay(WAIT_PER_CYCLE_MS);
 }
  
 /**
  * Makes the motor stop, by writing a logic 0 to both motor signals as specified in
- * {@link ex02-1#MOTOR_A1} and {@link ex01-1#MOTOR_A2}.
+ * {@link ex02-3#motorA} and {@link ex02-3#motorB}.
  */
 void stopMotor(){
   setMotorSpeed(true, 0, motorA);
   setMotorSpeed(true, 0, motorB);
+  
 }
 
 /**
@@ -126,7 +123,7 @@ void driveForward(const int mTime, const uint8_t mSpeed){
 
   // drive forward for the time given.
   delay(mTime);
-
+  
 }
 
 
@@ -158,12 +155,12 @@ void setMotorSpeed(const boolean mForward, uint8_t mSpeed, const uint8_t mMotors
   }
   
   if(mForward){
-    digitalWrite(mMotors[0], LOW);
-    analogWrite(mMotors[1], mSpeed);
+    digitalWrite(mMotors[1], LOW);
+    analogWrite(mMotors[0], mSpeed);
     return;
     
   }
-  analogWrite(mMotors[0], mSpeed);
-  digitalWrite(mMotors[1], LOW);
+  analogWrite(mMotors[1], mSpeed);
+  digitalWrite(mMotors[0], LOW);
   
 }

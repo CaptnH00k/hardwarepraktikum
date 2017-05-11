@@ -63,7 +63,6 @@ uint8_t motorA[2];
  * This method gets called once, before the update cycle starts ticking.
  */
 void setup(){
-  
   // Set the individual Motor-Signals to behave as outputs.
   pinMode(MOTOR_A1, OUTPUT);
   pinMode(MOTOR_A2, OUTPUT);
@@ -75,8 +74,6 @@ void setup(){
   motorA[0] = MOTOR_A1;
   motorA[1] = MOTOR_A2;
 
-  //because for motor b the signals are
-  //reverse, we also reverse the pins. 
   motorB[0] = MOTOR_B2;
   motorB[1] = MOTOR_B1;
   
@@ -91,10 +88,7 @@ void setup(){
 void loop(){
   stopMotor();
 
-  // TODO: add code for debugging purposes, no actual code implementation of setMotorSpeed is
-  // requested from exercise 4
-
-  driveCurve(5000, 100, 10);
+  driveCurve(125, 90, 1000);
 
   delay(WAIT_PER_CYCLE_MS);
 }
@@ -104,8 +98,8 @@ void loop(){
  * {@link ex02-4#MOTOR_A1} and {@link ex02-4#MOTOR_A2}.
  */
 void stopMotor(){
-  digitalWrite(MOTOR_A1, LOW);
-  digitalWrite(MOTOR_A2, LOW);
+  setMotorSpeed(true, 0, motorA);
+  setMotorSpeed(true, 0, motorA);
   
 }
 
@@ -146,7 +140,7 @@ void driveForward(const int mTime, const uint8_t mSpeed){
  * @param mCurveRadius
  *          The radius at which the motors will move. (e.g. the strength of the curve)
  */
-void driveCurve(const int mTime, const uint8_t mSpeed, const int16_t mCurveRadius){
+void driveCurve(const uint8_t mSpeed, const int16_t mCurveRadius, const uint8_t mTime){
   
   // method is undefined for curve radix out of the bounds [-90, 90]
   if(mCurveRadius > 90 || mCurveRadius < -90){
@@ -189,7 +183,6 @@ void driveCurve(const int mTime, const uint8_t mSpeed, const int16_t mCurveRadiu
     setMotorSpeed(forward, adjustedSpeed, motorB);
     
   }
-
   delay(mTime);
 }
 
@@ -222,12 +215,12 @@ void setMotorSpeed(const boolean mForward, uint8_t mSpeed, const uint8_t mMotors
   }
   
   if(mForward){
-    digitalWrite(mMotors[0], LOW);
-    analogWrite(mMotors[1], mSpeed);
+    digitalWrite(mMotors[1], LOW);
+    analogWrite(mMotors[0], mSpeed);
     return;
     
   }
-  analogWrite(mMotors[0], mSpeed);
-  digitalWrite(mMotors[1], LOW);
+  analogWrite(mMotors[1], mSpeed);
+  digitalWrite(mMotors[0], LOW);
   
 }

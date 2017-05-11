@@ -179,7 +179,6 @@ unsigned long time_before_pattern_start = 0;
  * This method gets called once, before the update cycle starts ticking.
  */
 void setup(){
-   Serial.begin(9600);
   //initialize fields.
   motorA[0] = MOTOR_A1;
   motorA[1] = MOTOR_A2;
@@ -210,8 +209,6 @@ void setup(){
 
   pinMode(MOTOR_B1, OUTPUT);
   pinMode(MOTOR_B2, OUTPUT);
-
-
   
 }
 
@@ -281,7 +278,6 @@ int getCurrentButton(const int16_t mAnalogValue) {
  * 
  */
 void checkButtonPress(const int16_t mAnalogValue){
-  Serial.print(getCurrentButton(mAnalogValue));
   patterns[getCurrentButton(mAnalogValue)] = true;
   
 }
@@ -330,7 +326,7 @@ void driveCirclePattern(){
 
   //drive in a circle for {@link ex02-5#CIRCLE_DRIVE_TIME} milliseconds.
   if(time_since_pattern_start < CIRCLE_DRIVE_TIME){
-    driveCurve(MAX_SPEED / 3, 45);
+    driveCurve(MAX_SPEED / 3, 30);
   
   //circle driving is finished, reset timer, set the flag of the pattern to false and stop the motor.
   }else{
@@ -556,6 +552,7 @@ void driveCurve(const uint8_t mSpeed, const int16_t mCurveRadius){
     setMotorSpeed(forward, adjustedSpeed, motorB);
     
   }
+
 }
 
 
@@ -587,12 +584,12 @@ void setMotorSpeed(const boolean mForward, uint8_t mSpeed, const uint8_t mMotors
   }
   
   if(mForward){
-    digitalWrite(mMotors[0], LOW);
-    analogWrite(mMotors[1], mSpeed);
+    digitalWrite(mMotors[1], LOW);
+    analogWrite(mMotors[0], mSpeed);
     return;
     
   }
-  analogWrite(mMotors[0], mSpeed);
-  digitalWrite(mMotors[1], LOW);
+  analogWrite(mMotors[1], mSpeed);
+  digitalWrite(mMotors[0], LOW);
   
 }
