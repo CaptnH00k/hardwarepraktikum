@@ -103,26 +103,25 @@ const int YELLOW_POSITION = 1;
  */
 const int GREEN_POSITION = 2;
 
+/**
+ * A boolean indicating whether the red LED is on or not.
+ */
 bool redIsOn = false;
 
+/**
+ * A boolean indicating whether the yellow LED is on or not.
+ */
 bool yellowIsOn = false;
 
-bool greenIsOn = false;
-
 /**
- * Counts the milliseconds passed since the start of this application. 
- * Will reset after a given amount of time (estimated reset after 50 days)
+ * A boolean indicating whether the green LED is on or not.
  */
-int tickCounter;
+bool greenIsOn = false;
 
 /*
  * This method gets called once, before the update cycle starts ticking.
  */
 void setup() {
-
-  // set to {@link ex01-7#FLICKER_PREVENTION_TIME}, so the content can 
-  // be written on the LCD instantly for the first time.
-  tickCounter = FLICKER_PREVENTION_TIME;
   
   // initializes the interface to the LCD with 4 rows and 20 chars per row
   lcd.begin(20, 4);
@@ -155,78 +154,71 @@ void loop() {
 
   lcdLogic(analogValue);
 
-  //Wait for 10ms, so the loop won't use the whole proecessors processing speed.
-  delay(10);
+  // wait for the time specified in {@link ex01-7#FlICKER_PREVENTION_TIME}.
+  delay(FLICKER_PREVENTION_TIME);
   
 }
 
 /**
- * Turns the given LED on.
+ * Turns the given LED on, also sets the flag of the LED (true) if it got turned on.
  * 
  * @param mLED
  *          The pin number associated with LED.
- *          
- * @param mLEDStatus 
- *          An array containing booleans which are the current status of each flag
  *            
- * @see ex01-7#ledStatus            
  */
-boolean turnOn(const int mLED){
-  // if the LED is off turn it on, and return true, so 
-  // the caller knows the "turning on" succeeded.
+void turnOn(const int mLED){
      if(mLED == RED_LED){
         if(redIsOn == false){
            digitalWrite(mLED, HIGH);
            redIsOn = true;
+           
         }
      }
      if(mLED == YELLOW_LED){
            if(yellowIsOn == false){
-           digitalWrite(mLED, HIGH);
-           yellowIsOn = true;
+             digitalWrite(mLED, HIGH);
+             yellowIsOn = true;
+           
         }
      }
      if(mLED == GREEN_LED){
            if(greenIsOn == false){
-           digitalWrite(mLED, HIGH);
-           greenIsOn = true;
+             digitalWrite(mLED, HIGH);
+             greenIsOn = true;
+           
         }
-        
      }
 }
 
 
 /**
- * Turns the given LED off.
+ * Turns the given LED off, also sets the flag of the LED (false) if it got turned off.
  * 
  * @param mLED
  *          The pin number associated with LED.
- *          
- * @param mLEDStatus 
- *          An array containing booleans which are the current status of each flag
- *            
- * @see ex01-7#ledStatus            
+ *                  
  */
-boolean turnOff(const int mLED){
-
-  // if the LED is on turn it off, and return false, so
-  // the caller can update the LED status.
+void turnOff(const int mLED){
+  
      if(mLED == RED_LED){
         if(redIsOn == true){
            digitalWrite(mLED, LOW);
            redIsOn = false;
+           
         }
      }
      if(mLED == YELLOW_LED){
            if(yellowIsOn == true){
-           digitalWrite(mLED, LOW);
-           yellowIsOn = false;
+            digitalWrite(mLED, LOW);
+            yellowIsOn = false;
+           
         }
      }
      if(mLED == GREEN_LED){
            if(greenIsOn == true){
-           digitalWrite(mLED, LOW);
-           greenIsOn = false;
+             digitalWrite(mLED, LOW);
+             greenIsOn = false;
+           
         }  
     }
 }
@@ -293,28 +285,30 @@ int getCurrentButton(const int mAnalogValue) {
 
 /*
  * The logic needed to control the LCDs features (printing, clearing, etc...)
- * 
- * @param mTimeSpan
- *            The time passed by for the callers method call up until calling this method.
  *            
  * @param mAnalogValue
  *            The value to be printed onto the LCD as the current analog pins value.
  */
 void lcdLogic(const int mAnalogValue){
-
-  // The current value of the analog pin A0.
-  int analogValue = analogRead(A0);
-
+  // this iterations button representation, e.g. which button(s) are pressed.
   String buttonRepresentation = "";
+
+  // checks which colors are turned on, and changes the button 
+  // representation accordingly
   if(redIsOn){
     buttonRepresentation = buttonRepresentation + "red";
+    
   }
+  
   if(yellowIsOn){
     if(buttonRepresentation == "red"){
       buttonRepresentation = buttonRepresentation + "+";
+      
     }
     buttonRepresentation = buttonRepresentation + "yellow";
+    
   }
+  
   if(greenIsOn){
     buttonRepresentation = buttonRepresentation + "green";
    
@@ -341,8 +335,6 @@ void lcdLogic(const int mAnalogValue){
 
   // Prints a string representation of all the LEDs which are currently on
   lcd.print("led: " + buttonRepresentation);
-
-  delay(FLICKER_PREVENTION_TIME);
 }
 
 /*
@@ -354,19 +346,24 @@ void lcdLogic(const int mAnalogValue){
  *          The time in milliseconds passed before the logic reset for this method.
  */
 void ledLogic(const int mTime){
-  
+
+  // only red gets turned on.
   if(mTime < (RED_LED_ON_TIME - YELLOW_LED_ON_TIME)) {
     turnOff(YELLOW_LED);
     turnOn(RED_LED);
-    
+
+  // start turning yellow on aswell.
   }else if(mTime < RED_LED_ON_TIME){
      turnOn(YELLOW_LED);
-    
+
+  // only turn green on, turn off yellow and red.
   }else if(mTime < (RED_LED_ON_TIME + GREEN_LED_ON_TIME)){
     turnOff(RED_LED);
     turnOff(YELLOW_LED);
     turnOn(GREEN_LED);
-    
+
+  // last pattern before reset. turn everything off except yellow. 
+  // Then restart the cycle. (Gets automatically reset by its given parameter mTime)
   }else {
     turnOff(GREEN_LED);
     turnOn(YELLOW_LED);
