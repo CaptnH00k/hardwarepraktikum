@@ -63,6 +63,7 @@ uint8_t motorA[2];
  * This method gets called once, before the update cycle starts ticking.
  */
 void setup(){
+  
   // Set the individual Motor-Signals to behave as outputs.
   pinMode(MOTOR_A1, OUTPUT);
   pinMode(MOTOR_A2, OUTPUT);
@@ -74,8 +75,10 @@ void setup(){
   motorA[0] = MOTOR_A1;
   motorA[1] = MOTOR_A2;
 
-  motorB[0] = MOTOR_B1;
-  motorB[1] = MOTOR_B2;
+  //because for motor b the signals are
+  //reverse, we also reverse the pins. 
+  motorB[0] = MOTOR_B2;
+  motorB[1] = MOTOR_B1;
   
 }
 
@@ -90,6 +93,8 @@ void loop(){
 
   // TODO: add code for debugging purposes, no actual code implementation of setMotorSpeed is
   // requested from exercise 4
+
+  driveCurve(5000, 100, 10);
 
   delay(WAIT_PER_CYCLE_MS);
 }
@@ -150,14 +155,14 @@ void driveCurve(const int mTime, const uint8_t mSpeed, const int16_t mCurveRadiu
   }
 
   // the factor at which the speed has to adjusted.
-  uint8_t factor = 1;
+  double factor = 1;
 
   // a flag determining whether to drive the adjusted motor forward or backward.
   boolean forward = true;
 
   //calculation for the factor at which the speed has to be adjusted.
   if(abs(mCurveRadius) <= 45){
-    factor = (45 - abs(mCurveRadius))/45;
+    factor = ((float) (45 - abs(mCurveRadius)))/ (float) (45);
     forward = true;
     
   }else if(abs(mCurveRadius) > 45){
@@ -169,10 +174,10 @@ void driveCurve(const int mTime, const uint8_t mSpeed, const int16_t mCurveRadiu
   }
 
   // the adjusted Speed. The speed given multiplicated by the factor for the adjustment.
-  uint8_t adjustedSpeed = factor * mSpeed;
+  double adjustedSpeed = factor * mSpeed;
   
   //Motor B is full speed, and Motor A has to adjust to the curve radius
-  if(mCurveRadius < 0){
+  if(mCurveRadius <= 0){
     setMotorSpeed(true, mSpeed, motorB);
 
     setMotorSpeed(forward, adjustedSpeed, motorA);

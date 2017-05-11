@@ -48,7 +48,7 @@ const int8_t ULTRASONIC_SENSOR = 12;
 /**
  * Holds the time in microseconds of how long to wait per impulse.
  */
-const int8_t IMPULSE_WAIT_US = 15;
+const int8_t IMPULSE_WAIT_US = 10;
 
 /**
  * Holds the value of how long to wait until checking the value of the ultrasonic sensor again.
@@ -66,13 +66,24 @@ const uint32_t ULTRASONIC_MEASURE_TIMEOUT = 30000;
  * This method gets called once, before the update cycle starts ticking.
  */
 void setup(){
-  
-  //set the ultrasonic sensor up, so it can measure distances.
-  pinMode(ULTRASONIC_SENSOR, OUTPUT);
+  Serial.begin(9600);
+
+  lcd.begin(16, 2);
 
   impulse(ULTRASONIC_SENSOR);
-  
-  pinMode(ULTRASONIC_SENSOR, INPUT);
+}
+
+void impulse(uint8_t mUltrasonicSensor){
+  //set the ultrasonic sensor up, so it can measure distances.
+  pinMode(mUltrasonicSensor, OUTPUT);
+
+  digitalWrite(mUltrasonicSensor, LOW);
+
+  digitalWrite(mUltrasonicSensor, HIGH);
+
+  delayMicroseconds(IMPULSE_WAIT_US);
+
+  digitalWrite(mUltrasonicSensor, LOW);
   
 }
 
@@ -121,9 +132,10 @@ int measureDistance(const int8_t mUltrasonicSensor){
   uint32_t wait_us = 0;
 
   while(true){
-    
+
     //pulse started
     if(digitalRead(mUltrasonicSensor) == HIGH){
+      Serial.print("yes");
       
       // start measuring.
       uint32_t time_before = micros();
@@ -144,6 +156,7 @@ int measureDistance(const int8_t mUltrasonicSensor){
     }else{
       delayMicroseconds(ULTRASONIC_MEASURE_WAIT);
       wait_us = wait_us + ULTRASONIC_MEASURE_WAIT;
+      impulse(mUltrasonicSensor);
 
       if(wait_us > ULTRASONIC_MEASURE_TIMEOUT){
         return -1;
@@ -152,26 +165,4 @@ int measureDistance(const int8_t mUltrasonicSensor){
     }
   }
 }
-
-/**
- * Sends an impulse to the given pin, with a specified wait 
- * in {@link ex02-6#IMPULSE_WAIT_US} from high to low.
- * 
- * @param mUltrasonicSensorPin
- *              The pin which receives the impulse.
- */
-void impulse(const int8_t mUltrasonicSensorPin){
-  
-  //reset the signal on the pin to low
-  digitalWrite(mUltrasonicSensorPin, LOW);
-
-  //now set it to high
-  digitalWrite(mUltrasonicSensorPin, HIGH);
-
-  //now wait for the specified pulse time
-  delayMicroseconds(IMPULSE_WAIT_US);
-
-  //finally write 0 to the pin so the pulse is complete
-  digitalWrite(mUltrasonicSensorPin, LOW);
- }
 

@@ -82,22 +82,22 @@ const uint8_t BUTTON_1 = 1;
 /**
  * Holding the integer value associated with the second button.
  */
-const uint8_t BUTTON_2 = 1;
+const uint8_t BUTTON_2 = 2;
 
 /**
  * Holding the integer value associated with the third button.
  */
-const uint8_t BUTTON_3 = 1;
+const uint8_t BUTTON_3 = 3;
 
 /**
  * Holding the integer value associated with the fourth button.
  */
-const uint8_t BUTTON_4 = 1;
+const uint8_t BUTTON_4 = 4;
 
 /**
  * Holding the integer value associated with the fifth button.
  */
-const uint8_t BUTTON_5 = 1;
+const uint8_t BUTTON_5 = 5;
 
 /**
  * Holds the time needed to drive the side of an rectangle.
@@ -179,12 +179,13 @@ unsigned long time_before_pattern_start = 0;
  * This method gets called once, before the update cycle starts ticking.
  */
 void setup(){
+   Serial.begin(9600);
   //initialize fields.
   motorA[0] = MOTOR_A1;
   motorA[1] = MOTOR_A2;
 
-  motorB[0] = MOTOR_B1;
-  motorB[1] = MOTOR_B2;
+  motorB[0] = MOTOR_B2;
+  motorB[1] = MOTOR_B1;
 
   
   isCirclePattern = false;
@@ -280,6 +281,7 @@ int getCurrentButton(const int16_t mAnalogValue) {
  * 
  */
 void checkButtonPress(const int16_t mAnalogValue){
+  Serial.print(getCurrentButton(mAnalogValue));
   patterns[getCurrentButton(mAnalogValue)] = true;
   
 }
@@ -328,7 +330,7 @@ void driveCirclePattern(){
 
   //drive in a circle for {@link ex02-5#CIRCLE_DRIVE_TIME} milliseconds.
   if(time_since_pattern_start < CIRCLE_DRIVE_TIME){
-    driveCurve(MAX_SPEED, 30);
+    driveCurve(MAX_SPEED / 3, 45);
   
   //circle driving is finished, reset timer, set the flag of the pattern to false and stop the motor.
   }else{
@@ -349,22 +351,22 @@ void driveTrianglePattern(){
 
   //from here on out calculation on what action to do, so the triangle shape can be achieved.
   if(time_since_pattern_start < TIME_PER_TRIANGLE_SIDE){
-    driveForward(MAX_SPEED);
+    driveForward(MAX_SPEED / 3);
     
   }else if(time_since_pattern_start < TIME_PER_TRIANGLE_SIDE + TRIANGLE_TURN_TIME){
-    driveCurve(MAX_SPEED, 90);
+    driveCurve(MAX_SPEED / 3, 90);
     
   }else if(time_since_pattern_start < 2 * TIME_PER_TRIANGLE_SIDE + TRIANGLE_TURN_TIME){
-    driveForward(MAX_SPEED);
+    driveForward(MAX_SPEED / 3);
     
   }else if(time_since_pattern_start < 2 * TIME_PER_TRIANGLE_SIDE + 2 * TRIANGLE_TURN_TIME){
-    driveCurve(MAX_SPEED, 90);
+    driveCurve(MAX_SPEED / 3, 90);
     
   }else if(time_since_pattern_start < 3 * TIME_PER_TRIANGLE_SIDE + 2 * TRIANGLE_TURN_TIME){
-    driveForward(MAX_SPEED);
+    driveForward(MAX_SPEED / 3);
     
   }else if(time_since_pattern_start < 3 * TIME_PER_TRIANGLE_SIDE + 3 * TRIANGLE_TURN_TIME){
-    driveCurve(MAX_SPEED, 90);
+    driveCurve(MAX_SPEED / 3, 90);
 
   //triangle driving is finished, reset timer, set the flag of the pattern to false and stop the motor.
   }else{
@@ -384,40 +386,40 @@ void driveHexagonPattern(){
 
   //from here on out calculation on what action to do, so the hexagon shape can be achieved.
   if(time_since_pattern_start < TIME_PER_HEXAGON_SIDE){
-    driveForward(MAX_SPEED);
+    driveForward(MAX_SPEED / 3);
     
   }else if(time_since_pattern_start < TIME_PER_HEXAGON_SIDE + HEXAGON_TURN_TIME){
-    driveCurve(MAX_SPEED, 90);
+    driveCurve(MAX_SPEED / 3, 90);
     
   }else if(time_since_pattern_start < 2 * TIME_PER_HEXAGON_SIDE + HEXAGON_TURN_TIME){
-    driveForward(MAX_SPEED);
+    driveForward(MAX_SPEED / 3);
     
   }else if(time_since_pattern_start < 2 * TIME_PER_HEXAGON_SIDE + 2 * HEXAGON_TURN_TIME){
-    driveCurve(MAX_SPEED, 90);
+    driveCurve(MAX_SPEED / 3, 90);
     
   }else if(time_since_pattern_start < 3 * TIME_PER_HEXAGON_SIDE + 2 * HEXAGON_TURN_TIME){
-    driveForward(MAX_SPEED);
+    driveForward(MAX_SPEED / 3);
     
   }else if(time_since_pattern_start < 3 * TIME_PER_HEXAGON_SIDE + 3 * HEXAGON_TURN_TIME){
-    driveCurve(MAX_SPEED, 90);
+    driveCurve(MAX_SPEED / 3, 90);
     
   }else if(time_since_pattern_start < 4 * TIME_PER_HEXAGON_SIDE + 3 * HEXAGON_TURN_TIME){
-    driveForward(MAX_SPEED);
+    driveForward(MAX_SPEED / 3);
     
   }else if(time_since_pattern_start < 4 * TIME_PER_HEXAGON_SIDE + 4 * HEXAGON_TURN_TIME){
-    driveCurve(MAX_SPEED, 90);
+    driveCurve(MAX_SPEED / 3, 90);
 
   }else if(time_since_pattern_start < 5 * TIME_PER_HEXAGON_SIDE + 4 * HEXAGON_TURN_TIME){
-    driveForward(MAX_SPEED);
+    driveForward(MAX_SPEED / 3);
     
   }else if(time_since_pattern_start < 5 * TIME_PER_HEXAGON_SIDE + 5 * HEXAGON_TURN_TIME){
-    driveCurve(MAX_SPEED, 90);
+    driveCurve(MAX_SPEED / 3, 90);
     
   }else if(time_since_pattern_start < 6 * TIME_PER_HEXAGON_SIDE + 5 * HEXAGON_TURN_TIME){
-    driveForward(MAX_SPEED);
+    driveForward(MAX_SPEED / 3);
     
   }else if(time_since_pattern_start < 6 * TIME_PER_HEXAGON_SIDE + 6 * HEXAGON_TURN_TIME){
-    driveCurve(MAX_SPEED, 90);
+    driveCurve(MAX_SPEED / 3, 90);
 
   //hexagon driving is finished, reset timer, set the flag of the pattern to false and stop the motor.
   }else{
@@ -439,28 +441,28 @@ void driveRectanglePattern(){
 
   //from here on out calculation on what action to do, so the rectangle shape can be achieved.
   if(time_since_pattern_start < TIME_PER_RECTANGLE_SIDE){
-    driveForward(MAX_SPEED);
+    driveForward(MAX_SPEED / 3);
     
   }else if(time_since_pattern_start < TIME_PER_RECTANGLE_SIDE + RECTANGLE_TURN_TIME){
-    driveCurve(MAX_SPEED, 90);
+    driveCurve(MAX_SPEED / 3, 90);
     
   }else if(time_since_pattern_start < 2 * TIME_PER_RECTANGLE_SIDE + RECTANGLE_TURN_TIME){
-    driveForward(MAX_SPEED);
+    driveForward(MAX_SPEED / 3);
     
   }else if(time_since_pattern_start < 2 * TIME_PER_RECTANGLE_SIDE + 2 * RECTANGLE_TURN_TIME){
-    driveCurve(MAX_SPEED, 90);
+    driveCurve(MAX_SPEED / 3, 90);
     
   }else if(time_since_pattern_start < 3 * TIME_PER_RECTANGLE_SIDE + 2 * RECTANGLE_TURN_TIME){
-    driveForward(MAX_SPEED);
+    driveForward(MAX_SPEED / 3);
     
   }else if(time_since_pattern_start < 3 * TIME_PER_RECTANGLE_SIDE + 3 * RECTANGLE_TURN_TIME){
-    driveCurve(MAX_SPEED, 90);
+    driveCurve(MAX_SPEED / 3, 90);
     
   }else if(time_since_pattern_start < 4 * TIME_PER_RECTANGLE_SIDE + 3 * RECTANGLE_TURN_TIME){
-    driveForward(MAX_SPEED);
+    driveForward(MAX_SPEED / 3);
     
   }else if(time_since_pattern_start < 4 * TIME_PER_RECTANGLE_SIDE + 4 * RECTANGLE_TURN_TIME){
-    driveCurve(MAX_SPEED, 90);
+    driveCurve(MAX_SPEED / 3, 90);
 
   //rectangle driving is finished, reset timer, set the flag of the pattern to false and stop the motor.
   }else{
@@ -478,8 +480,8 @@ void driveRectanglePattern(){
  * {@link ex02-5#MOTOR_A1} and {@link ex02-5#MOTOR_A2}.
  */
 void stopMotor(){
-  digitalWrite(MOTOR_A1, LOW);
-  digitalWrite(MOTOR_A2, LOW);
+  setMotorSpeed(true, 0, motorA);
+  setMotorSpeed(true, 0, motorB);
   
 }
 
@@ -520,14 +522,14 @@ void driveCurve(const uint8_t mSpeed, const int16_t mCurveRadius){
   }
 
   // the factor at which the speed has to adjusted.
-  uint8_t factor = 1;
+  double factor = 1;
 
   // a flag determining whether to drive the adjusted motor forward or backward.
   boolean forward = true;
 
   //calculation for the factor at which the speed has to be adjusted.
   if(abs(mCurveRadius) <= 45){
-    factor = (45 - abs(mCurveRadius))/45;
+    factor = ((float) (45 - abs(mCurveRadius)))/ (float) (45);
     forward = true;
     
   }else if(abs(mCurveRadius) > 45){
@@ -539,10 +541,10 @@ void driveCurve(const uint8_t mSpeed, const int16_t mCurveRadius){
   }
 
   // the adjusted Speed. The speed given multiplicated by the factor for the adjustment.
-  uint8_t adjustedSpeed = factor * mSpeed;
+  double adjustedSpeed = factor * mSpeed;
   
   //Motor B is full speed, and Motor A has to adjust to the curve radius
-  if(mCurveRadius < 0){
+  if(mCurveRadius <= 0){
     setMotorSpeed(true, mSpeed, motorB);
 
     setMotorSpeed(forward, adjustedSpeed, motorA);
