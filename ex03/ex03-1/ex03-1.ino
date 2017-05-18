@@ -1,6 +1,6 @@
 void setup() {
   // put your setup code here, to run once:
-
+  
 }
 
 void loop() {
@@ -13,17 +13,9 @@ void loop() {
 
 void setPin12(boolean high) {
   if(high == true) {
-    // Set 4th bit to one in register PORTB 
-    asm volatile (
-    "sbi %0, %1\n\t" // 2 clocks
-    :: "I" (_SFR_IO_ADDR(PORTB)), "I" (PORTB4)
-    );
+    PORTB |= (1 << 4);
   } else {
-    // Set  4th bit to zero in register PORTB 
-    asm volatile (
-    "cbi %0, %1\n\t" // 2 clocks
-    :: "I" (_SFR_IO_ADDR(PORTB)), "I" (PORTB4)
-    );
+    PORTB &= ~(1 << 4);  
   }
 }
 
