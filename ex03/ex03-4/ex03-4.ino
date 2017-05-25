@@ -5,18 +5,23 @@ boolean on = false;
 void setup() {
   Serial.begin(9600);
   
-  setTimerInterruptionEvent(SPEAKER_PIN, 1200, B01000000);
+  setTimerInterruptionEvent(SPEAKER_PIN, 1200, 3);
   
 }
 
 void loop(){
 }
 
-void setTimerInterruptionEvent(const uint8_t mPin, unsigned long mFrequency, byte mBytePrescaleShift){
+void setTimerInterruptionEvent(const uint8_t mPin, unsigned long mFrequency, int mBytePrescaleShift){
+  
 
   if(mFrequency < 100 || mFrequency > 2000){
     return;
     
+  }
+
+  if(mBytePrescaleShift > 4) {
+    return;
   }
   
   unsigned long coreFrequencyHz = 8000000;
@@ -33,14 +38,26 @@ void setTimerInterruptionEvent(const uint8_t mPin, unsigned long mFrequency, byt
   TCCR2A = 0;
 
   TCCR2B = 0;  
+
+  Serial.println(String(CS22));
+
+  if(mBytePrescaleShift == 1) {
+    TCCR2B |= (1 << CS20); 
+  } else if(mBytePrescaleShift == 2) {
+    TCCR2B |= (1 << CS21);
+  } else if(mBytePrescaleShift == 3) {
+    TCCR2B |= (1 << CS20);
+    TCCR2B |= (1 << CS21);
+  } else if(mBytePrescaleShift == 4) {
+    TCCR2B |= (1 << CS22);
+  }
   
-  TCCR2B |= (1 << CS22);
        
   // set mode (CTC)
   TCCR2A |= (1 << WGM21);
     
   // set output compare register A
-  OCR2A = 159;
+  OCR2A = counterOverflowReset;
     
   // enable interrupt
   TIMSK2 |= (1 << OCIE2A);    
